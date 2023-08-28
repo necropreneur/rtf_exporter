@@ -1,0 +1,48 @@
+22.08.23
+Position: -1in -17pt
+ 12:13
+Position: -33pt -17pt
+85,20
+Position: 337pt 29pt
+-4,6
+Position: 485pt 30pt
+22.08.23
+Position: 42pt 29pt
+ 12:13
+Position: 81pt 29pt
+1,33
+Position: 16pt 29pt
+42,60
+Position: 517pt 30pt
+42,50
+Position: 553pt 29pt
+22.08.23
+Position: -1in -2pt
+ 12:13
+Position: -33pt -2pt
+С
+Position: 121pt 43pt
+ о
+Position: 126pt 43pt
+ с
+Position: 131pt 43pt
+ т
+Position: 136pt 43pt
+ а
+Position: 141pt 43pt
+ в
+Position: 147pt 43pt
+  
+Position: 149pt 43pt
+2725,9
+Position: 331pt 43pt
+-5,2
+Position: 485pt 44pt
+22.08.23
+Position: 42pt 43pt
+ 12:13
+Position: 81pt 43pt
+1,00
+Position: 16pt 43pt
+Оператор:
+Position: 208pt 1in
