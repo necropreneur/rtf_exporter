@@ -89,7 +89,7 @@ def populate_dataframe(results, columns, x_borders, y_borders):
 
 
 def main():
-    tree = ET.parse('../экспорт.xml')
+    tree = ET.parse('../files/экспорт.xml')
     root = tree.getroot()
 
     extractor = PositionExtractor(root)
@@ -104,7 +104,7 @@ def main():
     df = populate_dataframe(results, columns, x_borders, y_borders)
 
     # Save the DataFrame to Excel
-    df.to_excel('output.xlsx', index=False, engine='openpyxl')
+    df.to_excel('../files/output.xlsx', index=False, engine='openpyxl')
     print(df)
 
 
