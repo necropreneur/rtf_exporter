@@ -1,5 +1,5 @@
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import os
 import xml.etree.ElementTree as ET
 import re
@@ -30,32 +30,32 @@ def update_positions_based_on_page(results):
         page_offset += max(find_all_date_y(page_data)) + 15
 
 
-def draw_plot(results, x_borders, y_borders):
-    # Plot positions on canvas.
-    plt.figure(figsize=(10, 10))
+# def draw_plot(results, x_borders, y_borders):
+#     # Plot positions on canvas.
+#     plt.figure(figsize=(10, 10))
 
-    for item in results:
-        x = item['position']['margin-left']
-        y = item['position']['margin-top']
-        if item['page'] == 1:
-            plt.scatter(x, y, color='blue')
-        elif item['page'] == 2:
-            plt.scatter(x, y, color='green')
+#     for item in results:
+#         x = item['position']['margin-left']
+#         y = item['position']['margin-top']
+#         if item['page'] == 1:
+#             plt.scatter(x, y, color='blue')
+#         elif item['page'] == 2:
+#             plt.scatter(x, y, color='green')
 
-    # Draw several vertical and horizontal lines
-    for x_line in x_borders:  # You can change these values to your needs
-        plt.axvline(x=x_line, color='red', linestyle='--', linewidth=0.8)
+#     # Draw several vertical and horizontal lines
+#     for x_line in x_borders:  # You can change these values to your needs
+#         plt.axvline(x=x_line, color='red', linestyle='--', linewidth=0.8)
 
-    for y_line in y_borders:  # Again, adjust these values as needed
-        plt.axhline(y=y_line, color='red', linestyle='--', linewidth=0.8)
+#     for y_line in y_borders:  # Again, adjust these values as needed
+#         plt.axhline(y=y_line, color='red', linestyle='--', linewidth=0.8)
 
-    # This will make the top left corner (0,0) as is common with many graphics systems
-    plt.gca().invert_yaxis()
-    plt.title('Positions on Canvas')
-    plt.xlabel('X Coordinate')
-    plt.ylabel('Y Coordinate')
-    plt.grid(True)
-    plt.show()
+#     # This will make the top left corner (0,0) as is common with many graphics systems
+#     plt.gca().invert_yaxis()
+#     plt.title('Positions on Canvas')
+#     plt.xlabel('X Coordinate')
+#     plt.ylabel('Y Coordinate')
+#     plt.grid(True)
+#     plt.show()
 
 def get_borders(results):
     date_to_y_positions = find_all_date_y(results)
