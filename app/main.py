@@ -1,11 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import re
+import os
 import xml.etree.ElementTree as ET
+import re
 
 from xml2object import PositionExtractor
 import util
+from df_fixer import fix_dataframe
+from excel_saver import write_df_to_excel
 
+COLUMNS = ["№", "Дата", "Время", "№ вагона", "Вид груза", "Груз-сть",
+               "Брутто", "Тара", "Нетто", "Пр|Нд", "Скор.", "Тел. 1", "Тел. 2"]
+COLUMNS_TO_FIX = ["№ вагона", "Вид груза"]
 
 def update_positions_based_on_page(results):
     # Update positions based on page number.
@@ -24,11 +30,10 @@ def update_positions_based_on_page(results):
         page_offset += max(util.find_all_date_y(page_data)) + 15
 
 
-def plot_positions(results):
+def draw_plot(results, x_borders, y_borders):
     # Plot positions on canvas.
     plt.figure(figsize=(10, 10))
-    # plt.scatter(x_coords, y_coords)
-    # Plot points with color based on 'page'
+
     for item in results:
         x = item['position']['margin-left']
         y = item['position']['margin-top']
@@ -36,14 +41,6 @@ def plot_positions(results):
             plt.scatter(x, y, color='blue')
         elif item['page'] == 2:
             plt.scatter(x, y, color='green')
-
-    date_to_y_positions = util.find_all_date_y(results)
-
-    x_borders = [x - 4 for x in [0, 42, 81, 120, 163,
-                                 298, 331, 374, 408, 443, 485, 517, 553, 600]]
-    y_borders = [y - 4 for y in [*date_to_y_positions,
-                                 max(date_to_y_positions) + 15]]
-    print(y_borders)
 
     # Draw several vertical and horizontal lines
     for x_line in x_borders:  # You can change these values to your needs
@@ -59,13 +56,22 @@ def plot_positions(results):
     plt.ylabel('Y Coordinate')
     plt.grid(True)
     plt.show()
+
+def get_borders(results):
+    date_to_y_positions = util.find_all_date_y(results)
+
+    x_borders = [x - 4 for x in [0, 42, 81, 120, 163,
+                                 298, 331, 374, 408, 443, 485, 517, 553, 600]]
+    y_borders = [y - 4 for y in [*date_to_y_positions,
+                                 max(date_to_y_positions) + 15]]
     return x_borders, y_borders
 
 
-def populate_dataframe(results, columns, x_borders, y_borders):
+def populate_dataframe(results, x_borders, y_borders):
     # Populate DataFrame based on positions and borders.
-    df = pd.DataFrame(columns=columns)
-    print(x_borders, y_borders)
+    global COLUMNS
+    df = pd.DataFrame(columns=COLUMNS)
+    # print(x_borders, y_borders)
 
     for yi, y in enumerate(y_borders[:-1]):
         for xi, x in enumerate(x_borders[:-1]):
@@ -79,34 +85,59 @@ def populate_dataframe(results, columns, x_borders, y_borders):
                     cell_text += item['text'] + ' '
 
             cell_text = cell_text.rstrip()
-            if xi < len(columns):
-                column_name = columns[xi]
+            if xi < len(COLUMNS):
+                column_name = COLUMNS[xi]
                 if len(df) <= yi:
-                    df.loc[yi] = [None] * len(columns)
+                    df.loc[yi] = [None] * len(COLUMNS)
                 df.at[yi, column_name] = cell_text
 
     return df
 
 
-def main():
-    tree = ET.parse('../files/экспорт.xml')
+def extract_date_from_xml(file_path: str) -> str:
+    # Parse the XML
+    tree = ET.parse(file_path)
+    root = tree.getroot()
+
+    # Define the regular expression pattern for extracting the date and time
+    pattern = r"Квитанция взвешивания от (\d{2}.\d{2}.\d{2} \d{2}:\d{2})"
+
+    for elem in root.iter():
+        if elem.tag.endswith("t") and elem.text:  # Check that <w:t> has text content
+            match = re.search(pattern, elem.text)
+            if match:
+                date_str = match.group(1)
+                return date_str  # Return the date
+
+    return ''  # In case no date is found
+
+
+def main(file_path: str):
+    tree = ET.parse(file_path)
     root = tree.getroot()
 
     extractor = PositionExtractor(root)
     results = extractor.extract_positions_from_xml()
     update_positions_based_on_page(results)
 
-    columns = ["№", "Дата", "Время", "№ вагона", "Вид груза", "Груз-сть",
-               "Брутто", "Тара", "Нетто", "Пр|Нд", "Скор.", "Тел. 1", "Тел. 2"]
+    x_borders, y_borders = get_borders(results)
 
-    x_borders, y_borders = plot_positions(results)
+    # draw_plot(results, x_borders, y_borders)
 
-    df = populate_dataframe(results, columns, x_borders, y_borders)
+    df = populate_dataframe(results, x_borders, y_borders)
 
-    # Save the DataFrame to Excel
-    df.to_excel('../files/output.xlsx', index=False, engine='openpyxl')
-    print(df)
+    df = fix_dataframe(df, COLUMNS_TO_FIX)
+
+    # Modify the output filename based on the input file_path
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    output_path = os.path.join(os.path.dirname(file_path), base_name + ".xlsx")
+
+    serial_number = ''
+    model = ''
+    date = extract_date_from_xml(file_path)
+
+    write_df_to_excel(output_path, df, serial_number, model, date)
 
 
 if __name__ == "__main__":
-    main()
+    main('../files/экспорт.xml')
