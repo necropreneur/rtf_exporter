@@ -15,14 +15,14 @@ def select_audio_file():
         run_btn.configure(state='normal')
 
 def run():
-    try:
-        main(FILE_PATH)
-        filename_label.configure(text="Готово! Выберите новый файл .xml")
-        audio_file_btn.configure(text='Выбрать файл')
+    # try:
+    main(FILE_PATH)
+    filename_label.configure(text="Готово! Выберите новый файл .xml")
+    audio_file_btn.configure(text='Выбрать файл')
         
-    except Exception as e:
-        # If there's any error in the main function, display it on the status label
-        filename_label.configure(text=f"Ошибка: {e}")
+    # except Exception as e:
+    #     # If there's any error in the main function, display it on the status label
+    #     filename_label.configure(text=f"Ошибка: {e}")
 
     run_btn.configure(state='disabled')
 

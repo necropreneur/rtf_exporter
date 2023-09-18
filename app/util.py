@@ -14,7 +14,7 @@ def check_date_format(s):
 def pt_in_2_value(value):
     """Convert pt and in values to pt."""
     suffix = value[-2:]
-    core = int(value[:-2])
+    core = int(float(value[:-2]))
     if suffix == 'pt':
         return core
     elif suffix == 'in':
