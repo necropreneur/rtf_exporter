@@ -4,10 +4,10 @@ import os
 import xml.etree.ElementTree as ET
 import re
 
-from xml2object import PositionExtractor
-import util
-from df_fixer import fix_dataframe
-from excel_saver import write_df_to_excel
+from .xml2object import PositionExtractor
+from .util import find_all_date_y
+from .df_fixer import fix_dataframe
+from .excel_saver import write_df_to_excel
 
 COLUMNS = ["№", "Дата", "Время", "№ вагона", "Вид груза", "Груз-сть",
                "Брутто", "Тара", "Нетто", "Пр|Нд", "Скор.", "Тел. 1", "Тел. 2"]
@@ -20,14 +20,14 @@ def update_positions_based_on_page(results):
 
     for page in range(1, unique_pages + 1):
         page_data = [item for item in results if item['page'] == page]
-        y_offset = min(util.find_all_date_y(page_data))
+        y_offset = min(find_all_date_y(page_data))
 
         for item in results:
             if item['page'] == page:
                 item['position']['margin-top'] += -y_offset + page_offset
 
         page_data = [item for item in results if item['page'] == page]
-        page_offset += max(util.find_all_date_y(page_data)) + 15
+        page_offset += max(find_all_date_y(page_data)) + 15
 
 
 def draw_plot(results, x_borders, y_borders):
@@ -58,7 +58,7 @@ def draw_plot(results, x_borders, y_borders):
     plt.show()
 
 def get_borders(results):
-    date_to_y_positions = util.find_all_date_y(results)
+    date_to_y_positions = find_all_date_y(results)
 
     x_borders = [x - 4 for x in [0, 42, 81, 120, 163,
                                  298, 331, 374, 408, 443, 485, 517, 553, 600]]

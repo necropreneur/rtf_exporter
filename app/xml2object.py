@@ -1,4 +1,4 @@
-import util
+from .util import pt_in_2_value
 
 
 class PositionExtractor:
@@ -27,10 +27,10 @@ class PositionExtractor:
                 if 'Страница' in text:
                     write_flag = False
                 if write_flag:
-                    ml = util.pt_in_2_value(position_data['margin-left'])
-                    mt = util.pt_in_2_value(position_data['margin-top'])
-                    w = util.pt_in_2_value(position_data['width'])
-                    h = util.pt_in_2_value(position_data['height'])
+                    ml = pt_in_2_value(position_data['margin-left'])
+                    mt = pt_in_2_value(position_data['margin-top'])
+                    w = pt_in_2_value(position_data['width'])
+                    h = pt_in_2_value(position_data['height'])
                     if ml >= 0 and mt >= 0 and w >= 0 and h >= 0:
                         position = {'margin-left': ml, 'margin-top': mt, 'width': w, 'height': h}
                         results.append({'text': text, 'position': position, 'page': page})

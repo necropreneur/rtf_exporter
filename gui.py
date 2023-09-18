@@ -2,7 +2,7 @@ import customtkinter as ctk
 # import tkinter as tk
 # from tkinter import filedialog, ttk
 from customtkinter import filedialog
-from main import main
+from app.main import main
 
 FILE_PATH = ''
 
