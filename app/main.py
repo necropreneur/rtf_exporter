@@ -111,6 +111,51 @@ def extract_date_from_xml(file_path: str) -> str:
 
     return ''  # In case no date is found
 
+# def extract_operator_from_xml(file_path: str) -> None:
+#     # Parse the XML
+#     tree = ET.parse(file_path)
+#     root = tree.getroot()
+
+#     for elem in root.iter():
+#         if elem.tag.endswith("t") and elem.text:  # Check that <w:t> has text content
+#             if "Оператор:" in elem.text:
+#                 print(elem.text)
+#                 break
+#             print(elem.text)
+
+def extract_operator_from_xml(file_path: str) -> None:
+    # Parse the XML
+    tree = ET.parse(file_path)
+    root = tree.getroot()
+
+    operator_found = False
+    next_elements = []
+    
+    # Iterate through elements to find the "Оператор:" text and collect next 2 elements
+    for elem in root.iter():
+        if elem.tag.endswith("t") and elem.text: 
+            if operator_found and len(next_elements) < 2:
+                next_elements.append(elem.text.strip())
+            if elem.text == "Оператор:":
+                operator_found = True
+    
+    # Check collected elements
+    # print(f"Collected elements after 'Оператор:': {next_elements}")
+    
+    # Validate using regex and print if correct
+    if len(next_elements) == 2:
+        name_pattern = re.compile(r'^\w+$')
+        initials_pattern = re.compile(r'^[А-Яа-я]\.[А-Яа-я]\.$')
+        
+        if name_pattern.match(next_elements[0]) and initials_pattern.match(next_elements[1]):
+            # print("Name:", next_elements[0].strip())
+            # print("Initials:", next_elements[1].strip())
+            return f"{next_elements[0].strip()} {next_elements[1].strip()}"
+        else:
+            # print("Pattern didn't match for the next elements after 'Оператор:'")
+            return ""
+
+
 
 def main(file_path: str):
     tree = ET.parse(file_path)
@@ -135,8 +180,9 @@ def main(file_path: str):
     serial_number = ''
     model = ''
     date = extract_date_from_xml(file_path)
+    operator = extract_operator_from_xml(file_path)
 
-    write_df_to_excel(output_path, df, serial_number, model, date)
+    write_df_to_excel(output_path, df, serial_number, model, date, operator)
 
 
 if __name__ == "__main__":
