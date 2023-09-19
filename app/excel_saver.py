@@ -10,7 +10,7 @@ def write_df_to_excel(filename, df, company, serial_number, model, date, operato
 
     # Write individual cells in the first four rows
     ws['A1'] = company
-    ws['A2'] = f'Sерийный номер: {serial_number}'  # Use variable for serial number
+    ws['A2'] = f'Серийный номер: {serial_number}'  # Use variable for serial number
     ws['A3'] = f'Модель: {model}'  # Use variable for model
     ws['A4'] = 'Квитанция взвешивания от: ' + date
 
