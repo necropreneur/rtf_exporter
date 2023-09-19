@@ -177,12 +177,13 @@ def main(file_path: str):
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     output_path = os.path.join(os.path.dirname(file_path), base_name + ".xlsx")
 
-    serial_number = ''
-    model = ''
+    company = 'ООО "ТД"Карелия Неруд"'
+    serial_number = '16262'
+    model = 'ДО-150Т-1(0,56)-100'
     date = extract_date_from_xml(file_path)
     operator = extract_operator_from_xml(file_path)
 
-    write_df_to_excel(output_path, df, serial_number, model, date, operator)
+    write_df_to_excel(output_path, df, company, serial_number, model, date, operator)
 
 
 if __name__ == "__main__":
