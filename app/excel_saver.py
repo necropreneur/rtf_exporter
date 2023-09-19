@@ -2,14 +2,14 @@ import pandas as pd
 from openpyxl import Workbook, load_workbook
 import os
 
-def write_df_to_excel(filename, df, serial_number, model, date, operator):
+def write_df_to_excel(filename, df, company, serial_number, model, date, operator):
     
     # Always start with a new workbook
     wb = Workbook()
     ws = wb.active
 
     # Write individual cells in the first four rows
-    ws['A1'] = 'ООО "ТД"Карелия Неруд"'
+    ws['A1'] = company
     ws['A2'] = f'Sерийный номер: {serial_number}'  # Use variable for serial number
     ws['A3'] = f'Модель: {model}'  # Use variable for model
     ws['A4'] = 'Квитанция взвешивания от: ' + date
