@@ -64,7 +64,7 @@ def get_borders(results):
     date_to_y_positions = find_all_date_y(results)
 
     x_borders = [x - 4 for x in [0, 42, 81, 120, 163,
-                                 298, 331, 374, 408, 443, 485, 517, 553, 600]]
+                                 298, 331, 366, 400, 443, 485, 517, 553, 600]]
     y_borders = [y - 4 for y in [*date_to_y_positions,
                                  max(date_to_y_positions) + 15]]
     return x_borders, y_borders
