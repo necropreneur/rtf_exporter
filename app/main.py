@@ -20,7 +20,10 @@ def update_positions_based_on_page(results):
 
     for page in range(1, unique_pages + 1):
         page_data = [item for item in results if item['page'] == page]
-        y_offset = min(find_all_date_y(page_data))
+        date_y_values = find_all_date_y(page_data)
+        if not date_y_values:  # Check if the list is empty
+            continue
+        y_offset = min(date_y_values)
 
         for item in results:
             if item['page'] == page:
