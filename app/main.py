@@ -163,15 +163,22 @@ def extract_operator_from_xml(file_path: str) -> None:
             return ""
 
 
-def read_config_values():
-    config = configparser.ConfigParser()
-    config.read("config.ini")
+def parse_config_txt(file_path):
+    config = {}
 
-    company = config["ProductInfo"]["company"]
-    serial_number = config["ProductInfo"]["serial_number"]
-    model = config["ProductInfo"]["model"]
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
 
-    return company, serial_number, model
+            # Skip empty lines and comments
+            if not line or line.startswith('#'):
+                continue
+            
+            # Split by the first equals sign
+            key, value = map(str.strip, line.split('=', 1))
+            config[key] = value
+
+    return config
 
 
 def main(file_path: str):
@@ -194,7 +201,11 @@ def main(file_path: str):
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     output_path = os.path.join(os.path.dirname(file_path), base_name + ".xlsx")
 
-    company, serial_number, model = read_config_values()
+    # Usage:
+    config_data = parse_config_txt('конфиг.txt')
+    company = config_data["company"]
+    serial_number = config_data["serial_number"]
+    model = config_data["model"]
     date = extract_date_from_xml(file_path)
     operator = extract_operator_from_xml(file_path)
 
