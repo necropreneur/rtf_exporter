@@ -1,3 +1,4 @@
+import configparser
 import pandas as pd
 # import matplotlib.pyplot as plt
 import os
@@ -10,8 +11,9 @@ from .df_fixer import fix_dataframe
 from .excel_saver import write_df_to_excel
 
 COLUMNS = ["№", "Дата", "Время", "№ вагона", "Вид груза", "Груз-сть",
-               "Брутто", "Тара", "Нетто", "Пр|Нд", "Скор.", "Тел. 1", "Тел. 2"]
+           "Брутто", "Тара", "Нетто", "Пр|Нд", "Скор.", "Тел. 1", "Тел. 2"]
 COLUMNS_TO_FIX = ["№ вагона", "Вид груза"]
+
 
 def update_positions_based_on_page(results):
     # Update positions based on page number.
@@ -106,7 +108,8 @@ def extract_date_from_xml(file_path: str) -> str:
     pattern = r"Квитанция взвешивания от (\d{2}.\d{2}.\d{2} \d{2}:\d{2})"
 
     for elem in root.iter():
-        if elem.tag.endswith("t") and elem.text:  # Check that <w:t> has text content
+        # Check that <w:t> has text content
+        if elem.tag.endswith("t") and elem.text:
             match = re.search(pattern, elem.text)
             if match:
                 date_str = match.group(1)
@@ -126,6 +129,7 @@ def extract_date_from_xml(file_path: str) -> str:
 #                 break
 #             print(elem.text)
 
+
 def extract_operator_from_xml(file_path: str) -> None:
     # Parse the XML
     tree = ET.parse(file_path)
@@ -133,23 +137,23 @@ def extract_operator_from_xml(file_path: str) -> None:
 
     operator_found = False
     next_elements = []
-    
+
     # Iterate through elements to find the "Оператор:" text and collect next 2 elements
     for elem in root.iter():
-        if elem.tag.endswith("t") and elem.text: 
+        if elem.tag.endswith("t") and elem.text:
             if operator_found and len(next_elements) < 2:
                 next_elements.append(elem.text.strip())
             if elem.text == "Оператор:":
                 operator_found = True
-    
+
     # Check collected elements
     # print(f"Collected elements after 'Оператор:': {next_elements}")
-    
+
     # Validate using regex and print if correct
     if len(next_elements) == 2:
         name_pattern = re.compile(r'^\w+$')
         initials_pattern = re.compile(r'^[А-Яа-я]\.[А-Яа-я]\.$')
-        
+
         if name_pattern.match(next_elements[0]) and initials_pattern.match(next_elements[1]):
             # print("Name:", next_elements[0].strip())
             # print("Initials:", next_elements[1].strip())
@@ -158,6 +162,16 @@ def extract_operator_from_xml(file_path: str) -> None:
             # print("Pattern didn't match for the next elements after 'Оператор:'")
             return ""
 
+
+def read_config_values():
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+
+    company = config["ProductInfo"]["company"]
+    serial_number = config["ProductInfo"]["serial_number"]
+    model = config["ProductInfo"]["model"]
+
+    return company, serial_number, model
 
 
 def main(file_path: str):
@@ -180,13 +194,12 @@ def main(file_path: str):
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     output_path = os.path.join(os.path.dirname(file_path), base_name + ".xlsx")
 
-    company = 'ООО "ТД"Карелия Неруд"'
-    serial_number = '16262'
-    model = 'ДО-150Т-1(0,56)-100'
+    company, serial_number, model = read_config_values()
     date = extract_date_from_xml(file_path)
     operator = extract_operator_from_xml(file_path)
 
-    write_df_to_excel(output_path, df, company, serial_number, model, date, operator)
+    write_df_to_excel(output_path, df, company,
+                      serial_number, model, date, operator)
 
 
 if __name__ == "__main__":
